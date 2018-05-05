@@ -20,6 +20,6 @@ urlpatterns = [
         name="shop_invoice"),
     url("^invoice/(?P<order_id>\d+)/resend%s$" % _slash,
         views.invoice_resend_email, name="shop_invoice_resend"),
-    url("^(?P<category_slug>.+)/(?P<slug>.+)/(?P<product_id>\d+)$",
+    url("^(?P<category_slug>.+)/(?P<slug>.+)%s$" % _slash,
         views.category_product, name="shop_category_product"),
 ]

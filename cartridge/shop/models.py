@@ -437,9 +437,19 @@ class Category(Page, RichText):
         """
         Returns this object's slug stripped of its parent's slug.
         """
-        if not self.parent or not self.parent.slug:
+        def get_non_category_slug(parent):
+            if not parent or not parent.slug:
+                return None
+
+            if not parent.category:
+                return parent.slug
+
+            return get_non_category_slug(parent.parent)
+
+        root = get_non_category_slug(self.parent)
+        if not root:
             return self.slug
-        return self.slug.lstrip(self.parent.slug).lstrip('/')
+        return self.slug.lstrip(root).lstrip('/')
 
 
 @python_2_unicode_compatible

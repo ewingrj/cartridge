@@ -101,14 +101,14 @@ def product(request, slug, template="shop/product.html",
 
     return TemplateResponse(request, templates, context)
 
-def category_product(request, category_slug, slug, product_id,
+def category_product(request, category_slug, slug,
                      template="shop/product.html"):
     """
      Display a product in terms of its category's slug.  Wrapper around
      product().
      """
     published_products = Product.objects.published(for_user=request.user)
-    product_obj = get_object_or_404(published_products, id=product_id)
+    product_obj = get_object_or_404(published_products, slug=slug)
     category = product_obj.get_category()
 
     # Tolerate stale URLs by redirecting to the new URL.
