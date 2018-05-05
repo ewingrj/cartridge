@@ -42,13 +42,14 @@ order_handler = handler(settings.SHOP_HANDLER_ORDER)
 
 
 def product(request, slug, template="shop/product.html",
-            form_class=AddProductForm, extra_context=None):
+            form_class=AddProductForm, extra_context=None, product=None):
     """
     Display a product - convert the product variations to JSON as well as
     handling adding the product to either the cart or the wishlist.
     """
-    published_products = Product.objects.published(for_user=request.user)
-    product = get_object_or_404(published_products, slug=slug)
+    if not product:
+        published_products = Product.objects.published(for_user=request.user)
+        product = get_object_or_404(published_products, slug=slug)
     fields = [f.name for f in ProductVariation.option_fields()]
     variations = product.variations.all()
     variations_json = dumps([dict([(f, getattr(v, f))
@@ -100,6 +101,25 @@ def product(request, slug, template="shop/product.html",
 
     return TemplateResponse(request, templates, context)
 
+def category_product(request, category_slug, slug, product_id,
+                     template="shop/product.html"):
+    """
+     Display a product in terms of its category's slug.  Wrapper around
+     product().
+     """
+    published_products = Product.objects.published(for_user=request.user)
+    product_obj = get_object_or_404(published_products, id=product_id)
+    category = product_obj.get_category()
+
+    # Tolerate stale URLs by redirecting to the new URL.
+    if not category:
+        # Setting is disabled or category has been removed.
+        return redirect(product_obj.get_absolute_url(), permanent=True)
+    elif slug != product_obj.slug or category_slug != category.get_raw_slug():
+        # Category or product slug mismatch.
+        return redirect(product_obj.get_absolute_url(), permanent=True)
+
+    return product(request, slug, template=template, product=product_obj)
 
 @never_cache
 def wishlist(request, template="shop/wishlist.html",
