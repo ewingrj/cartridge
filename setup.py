@@ -55,6 +55,7 @@ try:
         install_requires=[
             "mezzanine >= 4.2.0",
             "xhtml2pdf",
+            "django-multiurl == 1.1.0",
         ],
         extras_require={
             'stripe': ['stripe'],
