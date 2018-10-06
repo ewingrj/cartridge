@@ -72,6 +72,8 @@ from django.utils.translation import ugettext_lazy as _
 # eg for "Colour" then "Size" given the above:
 # SHOP_OPTION_ADMIN_ORDER = (2, 1)
 
+# If True, don't display unavailable products
+SHOP_HIDE_UNAVAILABLE = False
 
 ######################
 # MEZZANINE SETTINGS #

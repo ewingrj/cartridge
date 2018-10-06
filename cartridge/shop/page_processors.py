@@ -17,6 +17,8 @@ def category_processor(request, page):
     settings.clear_cache()
     products = Product.objects.published(for_user=request.user
                                 ).filter(page.category.filters()).distinct()
+    if settings.SHOP_HIDE_UNAVAILABLE:
+        products = products.filter(available=True)
     sort_options = [(slugify(option[0]), option[1])
                     for option in settings.SHOP_PRODUCT_SORT_OPTIONS]
     sort_by = request.GET.get(
